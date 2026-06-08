@@ -24,6 +24,9 @@
 
 #define MAX_LEDS_IN_GROUP 28
 #define RTL_ETH_LEDS	  24
+#define MAX_ETH_PORTS	  6
+#define RTL_ETH_LEDS_Y	  24
+#define RTL_ETH_LEDS_G	  44
 
 #define REG_LED0_SW_P_EN_CTRL 0xA010
 #define REG_LED_SW_P_CTRL     0xA01C
@@ -91,16 +94,7 @@ static int rtl8380_led_conf(void)
 
 static int rtl8380_led_probe(struct platform_device *pdev)
 {
-	struct device *dev = &pdev->dev;
 	int ret, i, cnt = 0, y_cnt = 0, g_cnt = 0, sfp_cnt = 0;
-
-	struct device_node *node;
-
-	node = dev->of_node;
-	if (!node) {
-		dev_err(dev, "missing DTS info\n");
-		return -EINVAL;
-	}
 
 	ret = rtl8380_led_conf();
 	if (ret) {
@@ -112,43 +106,61 @@ static int rtl8380_led_probe(struct platform_device *pdev)
 	if (!g_leds.rtl_cdevs)
 		return -ENOMEM;
 
+	for (i = 15; i < 23; i++) {
+
+		struct led_classdev *cdev = &g_leds.rtl_cdevs[i];
+		char *name;
+		int base, pin;
+		name = devm_kasprintf(dev, GFP_KERNEL, "eth_y_%d", ++y_cnt);
+		base = i / MAX_LEDS_IN_GROUP;
+		pin  = i % MAX_LEDS_IN_GROUP;
+		if (!name)
+			return -ENOMEM;
+		pr_debug("%s:%d %s bit %d base %i pin %i\n", __func__, __LINE__, name, i, base, pin);
+		cdev->name		       = name;
+		cdev->brightness_set_blocking  = rtl_led_set;
+		cdev->max_brightness	       = 1;
+		ret = devm_led_classdev_register(dev, cdev);
+		if (ret)
+			dev_err(dev, "Failed to register LED %d (err=%d)\n", i, ret);
+
+		cnt++;
+	}
 	for (i = 0; i < MAX_RTL_LEDS; i++) {
 		struct led_classdev *cdev = &g_leds.rtl_cdevs[i];
 		char *name;
 		int base, pin;
 
-		if (i>=0 && i<=7) {
+		switch (i) {
+		case <=8:
 			continue;
-		}
-		if (i>=15 && i<=23) {
-			continue;
-		}
-		if (i==25) {
-			continue;
-		}
-		if (i>=27 && i<=35) {
-			continue;
-		}
-		if (i>=44 && i<=54) {
-			continue;
-		}
-		if (i>=56 && i<=83) {
-			continue;
-		}
-		if (i>=8 && i<=14) {
+		case <=14:
 			name = devm_kasprintf(dev, GFP_KERNEL, "eth_y_%d", ++y_cnt);
-		}
-		if (i==24) {
+			break;
+		case <=23:
+			continue;
+		case 24:
 			name = devm_kasprintf(dev, GFP_KERNEL, "sfp_y_%d", ++sfp_cnt);
-		}
-		if (i==26) {
+			break;
+		case 25:
+			continue;
+		case 26:
 			name = devm_kasprintf(dev, GFP_KERNEL, "sfp_y_%d", ++sfp_cnt);
-		}
-		if (i>=36 && i<=43) {
+			break;
+		case <=35:
+			continue;
+		case <=43:
 			name = devm_kasprintf(dev, GFP_KERNEL, "eth_g_%d", ++g_cnt);
-		}
-		if (i==55) {
-			name = devm_kasprintf(dev, GFP_KERNEL, "master");
+			break;
+		case <=54:
+			continue;
+		case 55:
+			name = devm_kasprintf(dev, GFP_KERNEL, "except-55");
+			break;
+		case <=84:
+			continue;
+		default:
+			continue;
 		}
 
 		base = i / MAX_LEDS_IN_GROUP;
@@ -226,7 +238,8 @@ static int tlt_port_leds_probe(struct platform_device *pdev)
 
 	mutex_init(&g_leds.lock);
 
-	ret = rtl8380_led_probe(pdev);
+	// ret = rtl8380_led_probe(pdev);
+	ret = rtl8380_led_probe();
 	if (ret) {
 		dev_err(dev, "Unrecoverable error while probing RTL port leds %d\n", ret);
 		return ret;
