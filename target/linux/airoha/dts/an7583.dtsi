@@ -356,7 +356,7 @@
 			reg = <0x0 0x1fbe3400 0x0 0xff>;
 		};
 
-		scuclk: system-controller@1fa20000 {
+		scuclk: system-controller@1fb00000 {
 			compatible = "airoha,an7583-scu", "syscon";
 			reg = <0x0 0x1fb00000 0x0 0x970>;
 
@@ -422,7 +422,7 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 
-			status = "disable";
+			status = "disabled";
 		};
 
 		i2c1: i2c1@1fbf8100 {
@@ -436,7 +436,7 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 
-			status = "disable";
+			status = "disabled";
 		};
 
 		mmc0: mmc@1fa0e000 {
@@ -580,9 +580,9 @@
 			      <0x0 0x1fa86000 0x0 0x300>,
 			      <0x0 0x1fa8f000 0x0 0x1000>,
 			      <0x0 0x1fa8e000 0x0 0x1000>;
-			reg-names = "xfi_mac", "hsgmii_an", "hsgmii_pcs",
+			reg-names = "pcs_mac", "hsgmii_an", "hsgmii_pcs",
 				    "multi_sgmii", "usxgmii",
-				    "hsgmii_rate_adp", "xfi_ana", "xfi_pma";
+				    "hsgmii_rate_adp", "pcs_ana", "pcs_pma";
 
 			resets = <&scuclk AN7583_XPON_MAC_RST>,
 				 <&scuclk AN7583_XPON_PHY_RST>,
@@ -590,6 +590,8 @@
 			reset-names = "mac", "phy", "xfi";
 
 			airoha,scu = <&scuclk>;
+
+			#pcs-cells = <0>;
 		};
 
 		eth_pcs: pcs@1fa09000 {
@@ -602,15 +604,17 @@
 			      <0x0 0x1fa76000 0x0 0x300>,
 			      <0x0 0x1fa7f000 0x0 0x1000>,
 			      <0x0 0x1fa7e000 0x0 0x1000>;
-			reg-names = "xfi_mac", "hsgmii_an", "hsgmii_pcs",
+			reg-names = "pcs_mac", "hsgmii_an", "hsgmii_pcs",
 				    "multi_sgmii", "usxgmii",
-				    "hsgmii_rate_adp", "xfi_ana", "xfi_pma";
+				    "hsgmii_rate_adp", "pcs_ana", "pcs_pma";
 
 			resets = <&scuclk AN7583_XSI_MAC_RST>,
 				 <&scuclk AN7583_XSI_PHY_RST>;
 			reset-names = "mac", "phy";
 
 			airoha,scu = <&scuclk>;
+
+			#pcs-cells = <0>;
 		};
 
 		eth: ethernet@1fb50000 {

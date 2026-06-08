@@ -166,7 +166,8 @@ define KernelPackage/mlxreg
 	CONFIG_SENSORS_MLXREG_FAN \
 	CONFIG_LEDS_MLXREG
   FILES:= \
-	$(LINUX_DIR)/drivers/platform/x86/mlx-platform.ko \
+	$(LINUX_DIR)/drivers/platform/x86/mlx-platform.ko@lt6.18 \
+	$(LINUX_DIR)/drivers/platform/mellanox/mlx-platform.ko@ge6.18 \
 	$(LINUX_DIR)/drivers/platform/mellanox/mlxreg-hotplug.ko \
 	$(LINUX_DIR)/drivers/platform/mellanox/mlxreg-io.ko \
 	$(LINUX_DIR)/drivers/hwmon/mlxreg-fan.ko \
@@ -619,7 +620,7 @@ define KernelPackage/serial-8250-exar
   KCONFIG:= CONFIG_SERIAL_8250_EXAR
   FILES:=$(LINUX_DIR)/drivers/tty/serial/8250/8250_exar.ko
   AUTOLOAD:=$(call AutoProbe,8250 8250_base 8250_exar)
-  DEPENDS:=@PCI_SUPPORT +kmod-serial-8250
+  DEPENDS:=@PCI_SUPPORT +kmod-serial-8250 +!LINUX_6_12:kmod-eeprom-93cx6
 endef
 
 define KernelPackage/serial-8250-exar/description
@@ -842,6 +843,7 @@ define KernelPackage/ptp
   DEPENDS:=+kmod-pps
   KCONFIG:= \
 	CONFIG_PTP_1588_CLOCK \
+	CONFIG_PTP_1588_CLOCK_OPTIONAL \
 	CONFIG_NET_PTP_CLASSIFY=y
   FILES:=$(LINUX_DIR)/drivers/ptp/ptp.ko
   AUTOLOAD:=$(call AutoLoad,18,ptp,1)
@@ -860,7 +862,8 @@ define KernelPackage/ptp-qoriq
   TITLE:=Freescale QorIQ PTP support
   DEPENDS:=@(TARGET_mpc85xx||TARGET_qoriq) +kmod-ptp
   KCONFIG:=CONFIG_PTP_1588_CLOCK_QORIQ
-  FILES:=$(LINUX_DIR)/drivers/ptp/ptp-qoriq.ko
+  FILES:=$(LINUX_DIR)/drivers/ptp/ptp-qoriq.ko@lt6.18 \
+	$(LINUX_DIR)/drivers/ptp/ptp_qoriq.ko@ge6.18
   AUTOLOAD:=$(call AutoProbe,ptp-qoriq)
 endef
 
@@ -918,6 +921,7 @@ $(eval $(call KernelPackage,thermal))
 define KernelPackage/echo
   SUBMENU:=$(OTHER_MENU)
   TITLE:=Line Echo Canceller
+  DEPENDS:=@LINUX_6_12
   KCONFIG:=CONFIG_ECHO
   FILES:=$(LINUX_DIR)/drivers/misc/echo/echo.ko
   AUTOLOAD:=$(call AutoLoad,50,echo)
@@ -990,7 +994,7 @@ $(eval $(call KernelPackage,tpm))
 define KernelPackage/tpm-tis
   SUBMENU:=$(OTHER_MENU)
   TITLE:=TPM TIS 1.2 Interface / TPM 2.0 FIFO Interface
-	DEPENDS:= @(TARGET_x86||TARGET_armsr) +kmod-tpm
+	DEPENDS:= @(TARGET_x86||TARGET_armsr||TARGET_imx) +kmod-tpm
   KCONFIG:= CONFIG_TCG_TIS
   FILES:= \
 	$(LINUX_DIR)/drivers/char/tpm/tpm_tis.ko \
@@ -1006,6 +1010,27 @@ define KernelPackage/tpm-tis/description
 endef
 
 $(eval $(call KernelPackage,tpm-tis))
+
+define KernelPackage/tpm-tis-spi
+  SUBMENU:=$(OTHER_MENU)
+  TITLE:=TPM TIS 1.3 Interface SPI Interface
+	DEPENDS:= +kmod-tpm-tis +kmod-spi-dev
+  KCONFIG:= CONFIG_TCG_TIS_SPI \
+	CONFIG_TCG_TIS_SPI_CR50=n
+  FILES:= \
+	$(LINUX_DIR)/drivers/char/tpm/tpm_tis_spi.ko
+  AUTOLOAD:=$(call AutoLoad,20,tpm_tis_spi,1)
+endef
+
+define KernelPackage/tpm-tis-spi/description
+	If you have a TPM security chip which is connected to a regular,
+	non-tcg SPI master that is compliant with the
+	TCG TIS 1.3 TPM specification (TPM1.2) or the TCG PTP FIFO
+	specification (TPM2.0) say Yes and it will be accessible from
+	within Linux.
+endef
+
+$(eval $(call KernelPackage,tpm-tis-spi))
 
 define KernelPackage/tpm-i2c-atmel
   SUBMENU:=$(OTHER_MENU)

@@ -1,15 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=apk
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 
 PKG_SOURCE_URL=https://gitlab.alpinelinux.org/alpine/apk-tools.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2025-12-03
-PKG_SOURCE_VERSION:=982c9961ad9e71b4068911329c9d8121cedfd9f7
-PKG_MIRROR_HASH:=4fc89e2bbbe10edfaa199b1ca9ace139aa39b43d3de6236e8be8b421d81b334b
+PKG_SOURCE_VERSION:=b5a31c0d865342ad80be10d68f1bb3d3ad9b0866
+PKG_MIRROR_HASH:=bdb70571302d4baeafd4558522a49ce4c834c2acb51b954a19a3eea7f20b01b7
 
-PKG_VERSION=3.0.1
+PKG_VERSION=3.0.5
 
 PKG_MAINTAINER:=Paul Spooren <mail@aparcar.org>
 PKG_LICENSE:=GPL-2.0-only
@@ -27,7 +26,7 @@ define Package/apk/default
   SECTION:=base
   CATEGORY:=Base system
   TITLE:=apk package manager
-  DEPENDS:=+zlib +wget
+  DEPENDS:=+zlib +wget-any
   URL:=$(PKG_SOURCE_URL)
   PROVIDES:=apk
 endef

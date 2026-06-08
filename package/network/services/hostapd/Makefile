@@ -9,9 +9,9 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_URL:=https://w1.fi/hostap.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2025-08-26
-PKG_SOURCE_VERSION:=ca266cc24d8705eb1a2a0857ad326e48b1408b20
-PKG_MIRROR_HASH:=59ac677093f524ff98588abd9f33805a336a6e929d6814222f0d784c854f2343
+PKG_SOURCE_DATE:=2026-04-02
+PKG_SOURCE_VERSION:=b004de0bf1b54d669d358b7f33d6f474bd9719a6
+PKG_MIRROR_HASH:=0b0184e600c994a1f0415f52e8af26b39f13e376a30cdf0b4f3ca1a206e52fc8
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_LICENSE:=BSD-3-Clause
@@ -248,6 +248,7 @@ $(call Package/hostapd/Default,$(1))
   TITLE+= (WPA-PSK, 11r and 11w)
   VARIANT:=basic-mbedtls
   DEPENDS+=+PACKAGE_hostapd-basic-mbedtls:libmbedtls
+  DEFAULT_VARIANT:=1
 endef
 
 define Package/hostapd-basic-mbedtls/description
@@ -543,6 +544,7 @@ define Package/eapol-test
   $(call Package/eapol-test/Default,$(1))
   TITLE+= (built-in full)
   VARIANT:=supplicant-full-internal
+  DEFAULT_VARIANT:=1
 endef
 
 define Package/eapol-test-openssl

@@ -8,10 +8,10 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_VERSION:=2025.10
+PKG_VERSION:=2026.04
 PKG_RELEASE:=1
 
-PKG_HASH:=b4f032848e56cc8f213ad59f9132c084dbbb632bc29176d024e58220e0efdf4a
+PKG_HASH:=ac7c04b8b7004923b00a4e5d6699c5df4d21233bac9fda690d8cfbc209fff2fd
 
 include $(INCLUDE_DIR)/u-boot.mk
 include $(INCLUDE_DIR)/package.mk
@@ -75,12 +75,20 @@ define U-Boot/rb5009
   UBOOT_IMAGE:=u-boot.elf
 endef
 
+define U-Boot/atlas
+  NAME:=RIPE Atlas Probe v5
+  BUILD_DEVICES:=ripe_atlas-v5
+  BUILD_SUBTARGET:=cortexa53
+  UBOOT_CONFIG:=turris_mox
+endef
+
 UBOOT_TARGETS:= \
 	mox \
 	clearfog \
 	helios4 \
 	omnia \
 	espressobin \
+	atlas \
 	uDPU \
 	eDPU \
 	rb5009

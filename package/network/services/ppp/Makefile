@@ -10,7 +10,7 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=ppp
 PKG_VERSION:=2.5.2
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/ppp-project/ppp
@@ -20,7 +20,7 @@ PKG_SOURCE_VERSION:=9f612dc02c34509f062ed63b60bcc7e937e25178
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_LICENSE:=BSD-4-Clause
-PKG_CPE_ID:=cpe:/a:samba:ppp
+PKG_CPE_ID:=cpe:/a:point-to-point_protocol_project:point-to-point_protocol
 
 PKG_ASLR_PIE_REGULAR:=1
 PKG_BUILD_DEPENDS:=libpcap

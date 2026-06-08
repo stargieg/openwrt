@@ -391,6 +391,8 @@
 	};
 
 	ifc: ifc@ffe1e000 {
+		reg = <0x0 0xffe1e000 0 0x2000>;
+
 		status = "disabled";
 	};
 
@@ -458,6 +460,8 @@
 			label = "RFKILL switch";
 			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_RFKILL>;
+			linux,input-type = <EV_SW>;
+			debounce-interval = <60>;
 		};
 	};
 };
