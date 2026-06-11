@@ -331,8 +331,13 @@ define Device/teltonika_tsw202
   IMAGE_SIZE := 15168k
   DEVICE_VENDOR := Teltonika
   DEVICE_MODEL := TSW202
-  IMAGE/sysupgrade.bin := append-kernel | pad-to 64k | append-rootfs | pad-rootfs | \
-  check-size | append-metadata
+  IMAGE/sysupgrade.bin := \
+  	append-kernel | \
+	pad-to 64k | \
+	append-rootfs | \
+	pad-rootfs | \
+	check-size | \
+	append-metadata
   SUPPORTED_DEVICES := teltonika,tsw202
 endef
 TARGET_DEVICES += teltonika_tsw202
