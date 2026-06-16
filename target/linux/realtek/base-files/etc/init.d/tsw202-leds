@@ -1,0 +1,30 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2026 OpenWrt.org
+
+START=95
+
+tlt_tsw202() {
+	(
+		cd /sys/kernel/debug/rtl838x/led/
+
+		#Port with Link has Yellow On
+		#default value is 0x0500ff00
+		echo '0x00000000' > led0_sw_p_en_ctrl
+
+		#Port with Gigabit Link has Green On
+		#default value is 0x0000ff00
+		echo '0x08000000' > led1_sw_p_en_ctrl
+
+		#Port with Link has Yellow as Traffic Indicator
+		#default value is 0x00838107
+		echo '0x000000e0' > led_mode_ctrl
+	)
+}
+
+start() {
+	case $(board_name) in
+	teltonika,tsw202)
+		tlt_tsw202
+		;;
+	esac
+}
